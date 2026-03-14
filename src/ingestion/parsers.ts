@@ -104,12 +104,14 @@ export function parseWebsite(site: {
 
 // ── Chunk large documents for embedding ───────────────────────────
 export function chunkText(text: string, maxChunkSize = 2000, overlap = 200): string[] {
+  if (!text || text.length <= maxChunkSize) return [text || ""];
   const chunks: string[] = [];
   let start = 0;
   while (start < text.length) {
     const end = Math.min(start + maxChunkSize, text.length);
     chunks.push(text.slice(start, end));
-    start = end - overlap;
+    const next = end - overlap;
+    start = next <= start ? end : next; // always advance
     if (start >= text.length) break;
   }
   return chunks;
