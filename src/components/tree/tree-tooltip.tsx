@@ -8,6 +8,8 @@ interface TreeTooltipProps {
   node: PositionedTreeNode;
   containerZoom: number;
   containerPan: { x: number; y: number };
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 const priorityColors: Record<string, string> = {
@@ -24,7 +26,7 @@ const socialIcons = {
   website: Globe,
 };
 
-export function TreeTooltip({ node, containerZoom, containerPan }: TreeTooltipProps) {
+export function TreeTooltip({ node, containerZoom, containerPan, onMouseEnter, onMouseLeave }: TreeTooltipProps) {
   const x = (node.x + node.offsetX) * containerZoom + containerPan.x;
   const y = (node.y + node.offsetY) * containerZoom + containerPan.y;
 
@@ -37,8 +39,10 @@ export function TreeTooltip({ node, containerZoom, containerPan }: TreeTooltipPr
         left: x,
         top: y - 14,
         maxWidth: 240,
-        pointerEvents: hasSocials ? "auto" : "none",
+        pointerEvents: "auto",
       }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <p className="text-sm font-medium text-foreground">{node.name}</p>
       {node.role && (

@@ -1,13 +1,23 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { TreeNode } from "@/types/tree";
-import { mockTreeData } from "@/lib/mock-data";
+import type { PipelineResult } from "@/types/analysis";
+import { transformPipelineToTree } from "@/lib/adapters";
+
+// Empty initial tree - user builds via chat or pipeline
+const emptyTree: TreeNode = {
+  id: "company",
+  name: "Your Company",
+  type: "company",
+  children: [],
+};
 
 interface TreeStore {
   treeData: TreeNode;
   selectedNodeId: string | null;
   zoomLevel: number;
   panOffset: { x: number; y: number };
+  isFromBackend: boolean;
   setSelectedNodeId: (id: string | null) => void;
   setZoomLevel: (zoom: number) => void;
   setPanOffset: (offset: { x: number; y: number }) => void;
@@ -17,6 +27,7 @@ interface TreeStore {
   ensureDepartment: (name: string) => string;
   ensureTeam: (departmentId: string, teamName: string) => string;
   resetTree: () => void;
+  syncFromPipeline: (result: PipelineResult) => void;
 }
 
 function addToParent(tree: TreeNode, parentId: string, node: TreeNode): TreeNode {
@@ -65,10 +76,11 @@ function teamNameToId(deptId: string, name: string): string {
 export const useTreeStore = create<TreeStore>()(
   persist(
     (set, get) => ({
-      treeData: mockTreeData,
+      treeData: emptyTree,
       selectedNodeId: null,
       zoomLevel: 1,
       panOffset: { x: 0, y: 0 },
+      isFromBackend: false,
       setSelectedNodeId: (id) => set({ selectedNodeId: id }),
       setZoomLevel: (zoom) => set({ zoomLevel: Math.max(0.5, Math.min(3, zoom)) }),
       setPanOffset: (offset) => set({ panOffset: offset }),
@@ -114,11 +126,16 @@ export const useTreeStore = create<TreeStore>()(
         return id;
       },
 
-      resetTree: () => set({ treeData: mockTreeData }),
+      resetTree: () => set({ treeData: emptyTree, isFromBackend: false }),
+      
+      syncFromPipeline: (result: PipelineResult) => {
+        const newTree = transformPipelineToTree(result);
+        set({ treeData: newTree, isFromBackend: true });
+      },
     }),
     {
       name: "worktree-tree",
-      partialize: (state) => ({ treeData: state.treeData }),
+      partialize: (state) => ({ treeData: state.treeData, isFromBackend: state.isFromBackend }),
     }
   )
 );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { useTreeStore } from "@/stores/tree-store";
 import { useTreeLayout } from "./use-tree-layout";
 import { TreeTrunk } from "./tree-trunk";
@@ -11,6 +11,9 @@ import { TreeTooltip } from "./tree-tooltip";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import type { PositionedTreeNode } from "@/types/tree";
+
+// Delay before hiding tooltip to allow mouse to reach it
+const TOOLTIP_HIDE_DELAY = 150;
 
 function collectBranches(
   node: PositionedTreeNode,
@@ -53,10 +56,64 @@ export function TreeCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [hoveredNode, setHoveredNode] = useState<PositionedTreeNode | null>(null);
+  const [isTooltipHovered, setIsTooltipHovered] = useState(false);
   const [selectedBud, setSelectedBud] = useState<PositionedTreeNode | null>(null);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { treeData, zoomLevel, panOffset, setZoomLevel, setPanOffset, setSelectedNodeId } = useTreeStore();
 
   const layoutRoot = useTreeLayout(treeData, dimensions.width, dimensions.height);
+
+  // Handle hover with delay for tooltip accessibility
+  const handleNodeHover = useCallback((node: PositionedTreeNode | null) => {
+    // Clear any pending hide timeout
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+
+    if (node) {
+      // Show immediately
+      setHoveredNode(node);
+    } else {
+      // Delay hiding to allow mouse to reach tooltip
+      hideTimeoutRef.current = setTimeout(() => {
+        // Only hide if tooltip itself isn't hovered
+        setHoveredNode((current) => {
+          // This will be checked again in render via isTooltipHovered
+          return current;
+        });
+        // Actually hide after checking tooltip hover state
+        if (!isTooltipHovered) {
+          setHoveredNode(null);
+        }
+      }, TOOLTIP_HIDE_DELAY);
+    }
+  }, [isTooltipHovered]);
+
+  const handleTooltipMouseEnter = useCallback(() => {
+    setIsTooltipHovered(true);
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+  }, []);
+
+  const handleTooltipMouseLeave = useCallback(() => {
+    setIsTooltipHovered(false);
+    // Hide tooltip after leaving it
+    hideTimeoutRef.current = setTimeout(() => {
+      setHoveredNode(null);
+    }, TOOLTIP_HIDE_DELAY);
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -159,7 +216,7 @@ export function TreeCanvas() {
               key={node.id}
               node={node}
               index={i}
-              onHover={setHoveredNode}
+              onHover={handleNodeHover}
               onClick={handleNodeClick}
             />
           ))}
@@ -169,7 +226,7 @@ export function TreeCanvas() {
               key={node.id}
               node={node}
               index={i}
-              onHover={setHoveredNode}
+              onHover={handleNodeHover}
               onClick={handleNodeClick}
             />
           ))}
@@ -177,7 +234,13 @@ export function TreeCanvas() {
       </svg>
 
       {hoveredNode && (
-        <TreeTooltip node={hoveredNode} containerZoom={zoomLevel} containerPan={panOffset} />
+        <TreeTooltip 
+          node={hoveredNode} 
+          containerZoom={zoomLevel} 
+          containerPan={panOffset}
+          onMouseEnter={handleTooltipMouseEnter}
+          onMouseLeave={handleTooltipMouseLeave}
+        />
       )}
 
       <Sheet open={!!selectedBud} onOpenChange={(open) => !open && setSelectedBud(null)}>

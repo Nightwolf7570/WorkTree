@@ -7,11 +7,10 @@ import { cn } from "@/lib/utils";
 import { useUploadStore, type UploadedFile } from "@/stores/upload-store";
 
 const ACCEPTED_TYPES = {
-  "application/pdf": [".pdf"],
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"],
+  "text/plain": [".txt"],
+  "text/markdown": [".md"],
   "text/csv": [".csv"],
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+  "application/json": [".json"],
 };
 
 export function DropZone() {
@@ -19,13 +18,24 @@ export function DropZone() {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const uploadedFiles: UploadedFile[] = acceptedFiles.map((file) => ({
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-      }));
-      addFiles(uploadedFiles);
+      Promise.all(
+        acceptedFiles.map(
+          (file) =>
+            new Promise<UploadedFile>((resolve) => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                resolve({
+                  id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                  name: file.name,
+                  size: file.size,
+                  type: file.type,
+                  content: (e.target?.result as string) ?? "",
+                });
+              };
+              reader.readAsText(file);
+            })
+        )
+      ).then((uploadedFiles) => addFiles(uploadedFiles));
     },
     [addFiles]
   );
@@ -58,7 +68,7 @@ export function DropZone() {
             {isDragActive ? "Drop files here" : "Drag & drop your documents"}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            PDF, DOCX, PPTX, CSV, or XLSX
+            TXT, MD, CSV, or JSON — plain text files the AI can read
           </p>
         </div>
       </div>

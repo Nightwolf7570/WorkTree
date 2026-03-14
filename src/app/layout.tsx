@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { StackProvider, StackTheme } from "@stackframe/stack";
+import { stackServerApp } from "@/lib/auth";
 import { TopNav } from "@/components/layout/top-nav";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
@@ -30,10 +32,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TooltipProvider>
-          <TopNav />
-          {children}
-        </TooltipProvider>
+        <StackProvider app={stackServerApp}>
+          <StackTheme>
+            <TooltipProvider>
+              <TopNav />
+              {children}
+            </TooltipProvider>
+          </StackTheme>
+        </StackProvider>
       </body>
     </html>
   );

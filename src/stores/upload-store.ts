@@ -5,6 +5,7 @@ export interface UploadedFile {
   name: string;
   size: number;
   type: string;
+  content?: string; // text content for backend ingestion
 }
 
 type ProcessingStatus = "idle" | "uploading" | "processing" | "complete" | "error";

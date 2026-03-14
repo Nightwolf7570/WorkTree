@@ -10,40 +10,68 @@ import { ChatPanel } from "@/components/chat/chat-panel";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUploadStore } from "@/stores/upload-store";
-import { uploadDocuments, getProcessingStatus } from "@/lib/api";
+import { useCompanyStore } from "@/stores/company-store";
+import { useTreeStore } from "@/stores/tree-store";
+import { runPipeline } from "@/lib/api";
 import { ArrowRight, RotateCcw, Upload, MessageSquare } from "lucide-react";
 
 export default function UploadPage() {
   const {
     files,
     processingStatus,
-    setJobId,
     setProcessingStatus,
     setProgress,
     reset,
   } = useUploadStore();
 
+  const { profile, setPipelineResult } = useCompanyStore();
+  const syncFromPipeline = useTreeStore((state) => state.syncFromPipeline);
+
   const handleUpload = useCallback(async () => {
     if (files.length === 0) return;
 
     setProcessingStatus("uploading");
-    setProgress(10);
+    setProgress(20);
 
-    const { jobId } = await uploadDocuments([]);
-    setJobId(jobId);
-    setProcessingStatus("processing");
+    try {
+      const documents = files
+        .filter((f) => f.content)
+        .map((f) => ({
+          source: f.name,
+          title: f.name.replace(/\.[^.]+$/, ""),
+          content: f.content!,
+        }));
 
-    const poll = async () => {
-      const result = await getProcessingStatus(jobId);
-      setProgress(result.progress);
-      if (result.status === "complete") {
-        setProcessingStatus("complete");
-      } else {
-        setTimeout(poll, 1200);
+      if (documents.length === 0) {
+        setProcessingStatus("error");
+        return;
       }
-    };
-    poll();
-  }, [files, setJobId, setProcessingStatus, setProgress]);
+
+      setProgress(40);
+      setProcessingStatus("processing");
+
+      const result = await runPipeline(
+        {
+          name: profile.name,
+          industry: profile.industry,
+          description: profile.description,
+          employeeCount: parseInt(profile.size, 10) || undefined,
+        },
+        documents
+      );
+
+      setProgress(100);
+      setPipelineResult(result);
+      
+      // Sync the tree visualization with backend data
+      syncFromPipeline(result);
+      
+      setProcessingStatus("complete");
+    } catch (err) {
+      console.error("Pipeline error:", err);
+      setProcessingStatus("error");
+    }
+  }, [files, profile, setProcessingStatus, setProgress, setPipelineResult, syncFromPipeline]);
 
   return (
     <PageShell className="max-w-4xl">
@@ -100,11 +128,29 @@ export default function UploadPage() {
 
               <UploadProgress />
 
+              {processingStatus === "error" && (
+                <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+                  Analysis failed. Make sure the backend server is running and your documents contain readable text.
+                  <div className="mt-3">
+                    <Button variant="outline" onClick={reset} className="gap-2">
+                      <RotateCcw className="h-4 w-4" />
+                      Try Again
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {processingStatus === "complete" && (
                 <div className="flex gap-3">
                   <Link href="/analysis" className="flex-1">
                     <Button className="w-full gap-2">
                       View Analysis
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard">
+                    <Button variant="outline" className="gap-2">
+                      View Tree
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </Link>

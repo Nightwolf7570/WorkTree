@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { PipelineResult } from "@/types/analysis";
 
 interface CompanyProfile {
   name: string;
@@ -10,6 +11,11 @@ interface CompanyProfile {
 interface CompanyStore {
   profile: CompanyProfile;
   setProfile: (profile: Partial<CompanyProfile>) => void;
+  // Backend pipeline result
+  pipelineResult: PipelineResult | null;
+  setPipelineResult: (result: PipelineResult | null) => void;
+  companyId: string | null;
+  recommendationId: string | null;
 }
 
 export const useCompanyStore = create<CompanyStore>((set) => ({
@@ -21,4 +27,13 @@ export const useCompanyStore = create<CompanyStore>((set) => ({
   },
   setProfile: (profile) =>
     set((state) => ({ profile: { ...state.profile, ...profile } })),
+  pipelineResult: null,
+  setPipelineResult: (result) =>
+    set({
+      pipelineResult: result,
+      companyId: result?.company.id ?? null,
+      recommendationId: result?.recommendation.id ?? null,
+    }),
+  companyId: null,
+  recommendationId: null,
 }));
