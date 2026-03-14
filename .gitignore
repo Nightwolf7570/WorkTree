@@ -1,8 +1,10 @@
 node_modules/
 dist/
 .env
+.env.local
 *.js.map
-*.d.ts
 dev.db
 dev.db-wal
 dev.db-shm
+.next/
+next-env.d.ts

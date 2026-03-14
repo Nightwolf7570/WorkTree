@@ -250,22 +250,28 @@ api.get("/recommendations/:id/candidates", async (c) => {
 
 // ── Full Pipeline (one-shot) ───────────────────────────────────────
 api.post("/pipeline", async (c) => {
-  const body = await c.req.json<{
-    company: {
-      name: string;
-      website?: string;
-      stage?: string;
-      employeeCount?: number;
-      industry?: string;
-      description?: string;
-    };
-    documents: Array<{
-      source: string;
-      title: string;
-      content: string;
-    }>;
-  }>();
+  try {
+    const body = await c.req.json<{
+      company: {
+        name: string;
+        website?: string;
+        stage?: string;
+        employeeCount?: number;
+        industry?: string;
+        description?: string;
+      };
+      documents?: Array<{
+        source: string;
+        title: string;
+        content: string;
+      }>;
+    }>();
 
-  const result = await runFullPipeline(body.company, body.documents, wsCtx(c));
-  return c.json(result);
+    const result = await runFullPipeline(body.company, body.documents ?? [], wsCtx(c));
+    return c.json(result);
+  } catch (err) {
+    console.error("[pipeline] Fatal error:", err);
+    const message = err instanceof Error ? err.message : "Pipeline failed";
+    return c.json({ error: message }, 500);
+  }
 });

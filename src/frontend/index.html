@@ -90,50 +90,6 @@
       margin: 0 auto;
     }
 
-    /* ── Steps indicator ───────────────────── */
-    .steps {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      margin: 2rem 0;
-      flex-wrap: wrap;
-    }
-    .step-pill {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.4rem 1rem;
-      border-radius: 99px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      transition: all 0.3s;
-    }
-    .step-pill.active {
-      border-color: var(--accent);
-      color: var(--accent-light);
-      background: rgba(108, 92, 231, 0.1);
-    }
-    .step-pill.done {
-      border-color: var(--green);
-      color: var(--green);
-      background: rgba(0, 210, 160, 0.08);
-    }
-    .step-num {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      background: var(--surface2);
-    }
-    .step-pill.active .step-num { background: var(--accent); color: #fff; }
-    .step-pill.done .step-num { background: var(--green); color: #000; }
-
     /* ── Cards ──────────────────────────────── */
     .card {
       background: var(--surface);
@@ -185,7 +141,7 @@
       border-color: var(--accent);
     }
     textarea {
-      min-height: 120px;
+      min-height: 140px;
       resize: vertical;
     }
 
@@ -195,9 +151,9 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
+      padding: 0.85rem 2rem;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 600;
       border: none;
       cursor: pointer;
@@ -207,6 +163,8 @@
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), #5a4bd1);
       color: #fff;
+      width: 100%;
+      margin-top: 1rem;
     }
     .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
@@ -216,68 +174,61 @@
       border: 1px solid var(--border);
     }
     .btn-secondary:hover { border-color: var(--accent); }
-    .btn-ghost {
-      background: none;
-      color: var(--accent-light);
-      padding: 0.5rem 1rem;
-    }
-
-    .actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-      justify-content: flex-end;
-    }
-
-    /* ── Documents list ─────────────────────── */
-    .doc-list { display: flex; flex-direction: column; gap: 0.75rem; }
-    .doc-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .doc-item .doc-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-    .doc-item .doc-title { font-weight: 600; font-size: 0.95rem; }
-    .doc-item .doc-source { font-size: 0.8rem; color: var(--text-dim); }
-    .doc-remove {
-      background: none;
-      border: none;
-      color: var(--red);
-      cursor: pointer;
-      font-size: 1.2rem;
-      padding: 0.25rem;
-    }
 
     /* ── Pipeline progress ─────────────────── */
-    .pipeline-log {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
-      font-family: 'Cascadia Code', 'Fira Code', monospace;
-      font-size: 0.85rem;
-      max-height: 200px;
-      overflow-y: auto;
+    .pipeline-card {
       display: none;
     }
-    .pipeline-log.visible { display: block; }
-    .log-line { padding: 0.2rem 0; color: var(--text-dim); }
-    .log-line.success { color: var(--green); }
-    .log-line.error { color: var(--red); }
-    .log-line.info { color: var(--accent-light); }
+    .pipeline-card.visible { display: block; }
 
-    /* ── Spinner ────────────────────────────── */
-    .spinner {
-      width: 18px;
-      height: 18px;
+    .pipeline-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .p-step {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      transition: all 0.3s;
+    }
+    .p-step.active {
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+    .p-step.done {
+      border-color: var(--green);
+      color: var(--green);
+    }
+    .p-step.error {
+      border-color: var(--red);
+      color: var(--red);
+    }
+    .p-step-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      background: var(--surface2);
+      flex-shrink: 0;
+    }
+    .p-step.active .p-step-icon { background: var(--accent); color: #fff; }
+    .p-step.done .p-step-icon { background: var(--green); color: #000; }
+    .p-step.error .p-step-icon { background: var(--red); color: #fff; }
+
+    .spinner-sm {
+      width: 16px;
+      height: 16px;
       border: 2px solid var(--border);
       border-top-color: var(--accent-light);
       border-radius: 50%;
@@ -369,7 +320,7 @@
       font-size: 0.9rem;
     }
     .info-row:last-child { border-bottom: none; }
-    .info-label { color: var(--text-dim); min-width: 140px; font-weight: 600; }
+    .info-label { color: var(--text-dim); min-width: 140px; font-weight: 600; flex-shrink: 0; }
     .info-value { color: var(--text); flex: 1; }
 
     /* ── Candidate cards ───────────────────── */
@@ -404,9 +355,9 @@
     .candidate-rank.silver { background: rgba(200, 200, 220, 0.15); color: #c8c8dc; }
     .candidate-rank.bronze { background: rgba(205, 127, 50, 0.15); color: #cd7f32; }
     .candidate-rank.normal { background: var(--surface2); color: var(--text-dim); }
-    .candidate-info { flex: 1; }
+    .candidate-info { flex: 1; min-width: 0; }
     .candidate-name { font-weight: 700; font-size: 0.95rem; }
-    .candidate-title { font-size: 0.8rem; color: var(--text-dim); }
+    .candidate-title { font-size: 0.8rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .candidate-reasoning { font-size: 0.78rem; color: var(--text-dim); margin-top: 0.3rem; }
     .candidate-score {
       font-size: 1.3rem;
@@ -430,26 +381,12 @@
     }
     .candidate-links a:hover { border-color: var(--accent); }
 
-    /* ── Add doc modal ──────────────────────── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
+    .hint {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+      font-style: italic;
     }
-    .modal-overlay.visible { display: flex; }
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2rem;
-      width: 90%;
-      max-width: 550px;
-    }
-    .modal h3 { margin-bottom: 1rem; }
 
     /* ── Responsive ─────────────────────────── */
     @media (max-width: 600px) {
@@ -457,6 +394,7 @@
       .hero h1 { font-size: 1.8rem; }
       header { padding: 1rem; }
       main { padding: 1rem; }
+      .candidate-card { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -467,21 +405,14 @@
   </header>
 
   <main>
-    <div class="hero">
+    <div class="hero" id="hero">
       <h1>Find your <span class="gradient">highest-ROI hire</span></h1>
-      <p>Feed us your startup's docs and we'll analyze your gaps, recommend the perfect first hire, and find real candidates.</p>
+      <p>Tell us about your startup and we'll analyze your gaps, recommend the perfect hire, and find real candidates on LinkedIn.</p>
     </div>
 
-    <div class="steps">
-      <div class="step-pill active" id="step1"><span class="step-num">1</span> Company Info</div>
-      <div class="step-pill" id="step2"><span class="step-num">2</span> Documents</div>
-      <div class="step-pill" id="step3"><span class="step-num">3</span> Analyze</div>
-      <div class="step-pill" id="step4"><span class="step-num">4</span> Results</div>
-    </div>
-
-    <!-- ── Step 1: Company Info ─────────── -->
-    <div class="card" id="card-company">
-      <h2>Company Details</h2>
+    <!-- ── Company Form ─────────────────── -->
+    <div class="card" id="card-form">
+      <h2>Tell us about your startup</h2>
       <div class="form-grid">
         <div class="form-group">
           <label>Company Name *</label>
@@ -502,219 +433,103 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Employee Count</label>
-          <input type="number" id="company-employees" placeholder="12" />
-        </div>
-        <div class="form-group">
-          <label>Industry</label>
-          <input type="text" id="company-industry" placeholder="SaaS, Fintech, AI..." />
+          <label>Team Size</label>
+          <input type="number" id="company-employees" placeholder="5" />
         </div>
         <div class="form-group full">
-          <label>Description</label>
-          <textarea id="company-description" placeholder="Brief description of what your company does, target market, and current focus..."></textarea>
+          <label>Industry</label>
+          <input type="text" id="company-industry" placeholder="AI, SaaS, Fintech, DevTools..." />
+        </div>
+        <div class="form-group full">
+          <label>Describe your company *</label>
+          <textarea id="company-description" placeholder="What does your company do? What's your product? Who are your customers? What's your current team good at? Where are you struggling? What's your biggest challenge right now?
+
+The more detail you give, the better our analysis will be."></textarea>
+          <div class="hint">Be specific about your product, team, challenges, and goals. This is the main input for the AI analysis.</div>
         </div>
       </div>
-      <div class="actions">
-        <button class="btn btn-primary" onclick="goToStep(2)">Next: Add Documents</button>
+      <button class="btn btn-primary" onclick="runPipeline()" id="btn-go">Analyze & Find Candidates</button>
+    </div>
+
+    <!-- ── Pipeline Progress ────────────── -->
+    <div class="card pipeline-card" id="card-pipeline">
+      <h2>Running WorkTree Pipeline</h2>
+      <div class="pipeline-steps">
+        <div class="p-step" id="ps-1"><span class="p-step-icon">1</span> Creating company profile</div>
+        <div class="p-step" id="ps-2"><span class="p-step-icon">2</span> Analyzing organizational gaps</div>
+        <div class="p-step" id="ps-3"><span class="p-step-icon">3</span> Determining highest-ROI hire</div>
+        <div class="p-step" id="ps-4"><span class="p-step-icon">4</span> Discovering candidates on LinkedIn</div>
       </div>
     </div>
 
-    <!-- ── Step 2: Documents ────────────── -->
-    <div class="card" id="card-documents" style="display:none">
-      <h2>Company Documents</h2>
-      <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:1rem">
-        Add internal documents, pitch decks, product specs, or any context about your company.
-        The more context, the better the analysis.
-      </p>
-      <div class="doc-list" id="doc-list"></div>
-      <div class="actions" style="justify-content:space-between">
-        <button class="btn btn-secondary" onclick="openDocModal()">+ Add Document</button>
-        <div style="display:flex;gap:0.75rem">
-          <button class="btn btn-ghost" onclick="goToStep(1)">Back</button>
-          <button class="btn btn-primary" onclick="goToStep(3)" id="btn-analyze">Run Analysis Pipeline</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Step 3: Running ──────────────── -->
-    <div class="card" id="card-running" style="display:none">
-      <h2><span class="spinner"></span> Running Pipeline...</h2>
-      <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:1rem">
-        Analyzing your company, identifying gaps, recommending the best hire, and discovering candidates...
-      </p>
-      <div class="pipeline-log visible" id="pipeline-log"></div>
-    </div>
-
-    <!-- ── Step 4: Results ──────────────── -->
+    <!-- ── Results ──────────────────────── -->
     <div class="results" id="results-section">
 
-      <div class="result-section" id="result-analysis">
+      <div class="result-section">
         <h3>Company Analysis</h3>
         <div class="metric-row" id="analysis-metrics"></div>
         <div id="analysis-details"></div>
       </div>
 
-      <div class="result-section" id="result-recommendation">
+      <div class="result-section">
         <h3>Recommended Hire</h3>
         <div id="recommendation-details"></div>
       </div>
 
-      <div class="result-section" id="result-candidates">
+      <div class="result-section">
         <h3>Top Candidates</h3>
         <div class="candidate-grid" id="candidate-grid"></div>
       </div>
 
-      <div class="actions">
+      <div style="text-align:center;margin-top:1.5rem">
         <button class="btn btn-secondary" onclick="resetApp()">Start Over</button>
       </div>
     </div>
   </main>
 
-  <!-- ── Add Document Modal ───────────── -->
-  <div class="modal-overlay" id="doc-modal">
-    <div class="modal">
-      <h3>Add Document</h3>
-      <div style="display:flex;flex-direction:column;gap:1rem">
-        <div class="form-group">
-          <label>Title</label>
-          <input type="text" id="doc-title" placeholder="Product Roadmap Q1" />
-        </div>
-        <div class="form-group">
-          <label>Source Type</label>
-          <select id="doc-source">
-            <option value="pitch_deck">Pitch Deck</option>
-            <option value="product_spec">Product Spec</option>
-            <option value="notion">Notion Page</option>
-            <option value="gdocs">Google Doc</option>
-            <option value="slack">Slack Conversation</option>
-            <option value="github">GitHub README</option>
-            <option value="website">Website Content</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Content</label>
-          <textarea id="doc-content" placeholder="Paste the document content here..." style="min-height:200px"></textarea>
-        </div>
-        <div class="actions">
-          <button class="btn btn-ghost" onclick="closeDocModal()">Cancel</button>
-          <button class="btn btn-primary" onclick="addDocument()">Add Document</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
-    const API_BASE = '/api';
-    const documents = [];
-
-    // ── Step navigation ──────────────────
-    function goToStep(step) {
-      // Validate step 1
-      if (step === 2) {
-        const name = document.getElementById('company-name').value.trim();
-        if (!name) { alert('Please enter a company name'); return; }
-      }
-      if (step === 3) {
-        if (documents.length === 0) { alert('Please add at least one document'); return; }
-        runPipeline();
-        return;
-      }
-
-      document.getElementById('card-company').style.display = step === 1 ? 'block' : 'none';
-      document.getElementById('card-documents').style.display = step === 2 ? 'block' : 'none';
-      document.getElementById('card-running').style.display = 'none';
-      document.getElementById('results-section').classList.remove('visible');
-
-      document.querySelectorAll('.step-pill').forEach((el, i) => {
-        el.className = 'step-pill' + (i + 1 === step ? ' active' : i + 1 < step ? ' done' : '');
-      });
-    }
-
-    // ── Document management ──────────────
-    function openDocModal() { document.getElementById('doc-modal').classList.add('visible'); }
-    function closeDocModal() {
-      document.getElementById('doc-modal').classList.remove('visible');
-      document.getElementById('doc-title').value = '';
-      document.getElementById('doc-content').value = '';
-    }
-
-    function addDocument() {
-      const title = document.getElementById('doc-title').value.trim();
-      const content = document.getElementById('doc-content').value.trim();
-      const source = document.getElementById('doc-source').value;
-      if (!title || !content) { alert('Please fill in both title and content'); return; }
-      documents.push({ title, content, source });
-      renderDocList();
-      closeDocModal();
-    }
-
-    function removeDoc(idx) {
-      documents.splice(idx, 1);
-      renderDocList();
-    }
-
-    function renderDocList() {
-      const list = document.getElementById('doc-list');
-      if (documents.length === 0) {
-        list.innerHTML = '<p style="color:var(--text-dim);font-size:0.9rem;text-align:center;padding:2rem 0">No documents added yet. Click "Add Document" to get started.</p>';
-        return;
-      }
-      list.innerHTML = documents.map((doc, i) => `
-        <div class="doc-item">
-          <div class="doc-info">
-            <span class="doc-title">${esc(doc.title)}</span>
-            <span class="doc-source">${esc(doc.source)} &middot; ${doc.content.length} chars</span>
-          </div>
-          <button class="doc-remove" onclick="removeDoc(${i})">&times;</button>
-        </div>
-      `).join('');
-    }
-
     // ── Pipeline execution ───────────────
     async function runPipeline() {
-      document.getElementById('card-company').style.display = 'none';
-      document.getElementById('card-documents').style.display = 'none';
-      document.getElementById('card-running').style.display = 'block';
-      document.getElementById('results-section').classList.remove('visible');
+      const name = document.getElementById('company-name').value.trim();
+      const desc = document.getElementById('company-description').value.trim();
+      if (!name) { alert('Please enter a company name'); return; }
+      if (!desc) { alert('Please describe your company — this is what the AI analyzes'); return; }
 
-      document.querySelectorAll('.step-pill').forEach((el, i) => {
-        el.className = 'step-pill' + (i + 1 === 3 ? ' active' : i + 1 < 3 ? ' done' : '');
-      });
+      // Hide form, show pipeline
+      document.getElementById('card-form').style.display = 'none';
+      document.getElementById('hero').style.display = 'none';
+      const pipeCard = document.getElementById('card-pipeline');
+      pipeCard.classList.add('visible');
 
-      const log = document.getElementById('pipeline-log');
-      log.innerHTML = '';
-
-      function addLog(msg, cls = '') {
-        const line = document.createElement('div');
-        line.className = 'log-line ' + cls;
-        line.textContent = msg;
-        log.appendChild(line);
-        log.scrollTop = log.scrollHeight;
-      }
-
-      addLog('> Starting WorkTree pipeline...', 'info');
-      addLog('> Sending company data and documents...');
+      // Animate steps
+      setStep(1, 'active');
 
       const payload = {
         company: {
-          name: document.getElementById('company-name').value.trim(),
+          name,
           website: document.getElementById('company-website').value.trim() || undefined,
           stage: document.getElementById('company-stage').value,
           employeeCount: parseInt(document.getElementById('company-employees').value) || undefined,
           industry: document.getElementById('company-industry').value.trim() || undefined,
-          description: document.getElementById('company-description').value.trim() || undefined,
+          description: desc,
         },
-        documents: documents,
       };
 
+      // Simulate step progress
+      const stepTimer = setTimeout(() => setStep(2, 'active'), 2000);
+      const stepTimer2 = setTimeout(() => setStep(3, 'active'), 8000);
+      const stepTimer3 = setTimeout(() => setStep(4, 'active'), 15000);
+
       try {
-        addLog('> Calling /api/pipeline...', 'info');
-        const res = await fetch(`${API_BASE}/pipeline`, {
+        const res = await fetch('/api/pipeline', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
+
+        clearTimeout(stepTimer);
+        clearTimeout(stepTimer2);
+        clearTimeout(stepTimer3);
 
         if (!res.ok) {
           const err = await res.json().catch(() => ({ error: res.statusText }));
@@ -722,28 +537,57 @@
         }
 
         const data = await res.json();
-        addLog('> Pipeline complete!', 'success');
 
-        setTimeout(() => showResults(data), 500);
+        // Mark all done
+        for (let i = 1; i <= 4; i++) setStep(i, 'done');
+
+        setTimeout(() => {
+          pipeCard.classList.remove('visible');
+          showResults(data);
+        }, 600);
+
       } catch (err) {
-        addLog(`> Error: ${err.message}`, 'error');
-        addLog('> Check the server console for details.', 'error');
-        // Show retry
-        const retry = document.createElement('div');
-        retry.style.marginTop = '1rem';
-        retry.innerHTML = '<button class="btn btn-secondary" onclick="goToStep(2)">Go Back & Retry</button>';
-        log.parentElement.appendChild(retry);
+        clearTimeout(stepTimer);
+        clearTimeout(stepTimer2);
+        clearTimeout(stepTimer3);
+        // Find active step and mark error
+        for (let i = 4; i >= 1; i--) {
+          const el = document.getElementById('ps-' + i);
+          if (el.classList.contains('active')) {
+            el.classList.remove('active');
+            el.classList.add('error');
+            el.querySelector('.p-step-icon').textContent = '!';
+            break;
+          }
+        }
+        const errDiv = document.createElement('div');
+        errDiv.style.cssText = 'margin-top:1rem;padding:1rem;background:rgba(255,107,107,0.1);border:1px solid var(--red);border-radius:8px;color:var(--red);font-size:0.9rem';
+        errDiv.innerHTML = `<strong>Error:</strong> ${esc(err.message)}<br><br><button class="btn btn-secondary" onclick="location.reload()">Try Again</button>`;
+        pipeCard.appendChild(errDiv);
+      }
+    }
+
+    function setStep(n, state) {
+      const el = document.getElementById('ps-' + n);
+      el.className = 'p-step ' + state;
+      if (state === 'active') {
+        el.querySelector('.p-step-icon').innerHTML = '<span class="spinner-sm"></span>';
+        // Mark previous steps done
+        for (let i = 1; i < n; i++) {
+          const prev = document.getElementById('ps-' + i);
+          if (!prev.classList.contains('done')) {
+            prev.className = 'p-step done';
+            prev.querySelector('.p-step-icon').textContent = '\u2713';
+          }
+        }
+      } else if (state === 'done') {
+        el.querySelector('.p-step-icon').textContent = '\u2713';
       }
     }
 
     // ── Render results ───────────────────
     function showResults(data) {
-      document.getElementById('card-running').style.display = 'none';
       document.getElementById('results-section').classList.add('visible');
-
-      document.querySelectorAll('.step-pill').forEach((el, i) => {
-        el.className = 'step-pill' + (i + 1 === 4 ? ' active' : ' done');
-      });
 
       const a = data.analysis || {};
       const r = data.recommendation || {};
@@ -757,7 +601,7 @@
         </div>
         <div class="metric">
           <div class="metric-value">${data.documentsIngested || 0}</div>
-          <div class="metric-label">Docs Ingested</div>
+          <div class="metric-label">Docs Analyzed</div>
         </div>
         <div class="metric">
           <div class="metric-value">${candidates.length}</div>
@@ -766,26 +610,16 @@
       `;
 
       // Analysis details
-      let analysisHtml = '';
-      if (a.productState) analysisHtml += infoRow('Product State', a.productState);
-      if (a.growthState) analysisHtml += infoRow('Growth State', a.growthState);
-      if (a.engineeringState) analysisHtml += infoRow('Engineering State', a.engineeringState);
-      if (a.topBottleneck) analysisHtml += infoRow('Top Bottleneck', a.topBottleneck);
-      if (a.recommendedHiringFocus) analysisHtml += infoRow('Hiring Focus', a.recommendedHiringFocus);
-
-      if (a.strongestAreas?.length) {
-        analysisHtml += '<div style="margin-top:0.75rem"><label>Strongest Areas</label><div class="tag-list">' +
-          a.strongestAreas.map(s => `<span class="tag green">${esc(s)}</span>`).join('') + '</div></div>';
-      }
-      if (a.weakestAreas?.length) {
-        analysisHtml += '<div style="margin-top:0.75rem"><label>Weakest Areas</label><div class="tag-list">' +
-          a.weakestAreas.map(s => `<span class="tag red">${esc(s)}</span>`).join('') + '</div></div>';
-      }
-      if (a.strategicBottlenecks?.length) {
-        analysisHtml += '<div style="margin-top:0.75rem"><label>Strategic Bottlenecks</label><div class="tag-list">' +
-          a.strategicBottlenecks.map(s => `<span class="tag orange">${esc(s)}</span>`).join('') + '</div></div>';
-      }
-      document.getElementById('analysis-details').innerHTML = analysisHtml;
+      let html = '';
+      if (a.productState) html += infoRow('Product State', a.productState);
+      if (a.growthState) html += infoRow('Growth State', a.growthState);
+      if (a.engineeringState) html += infoRow('Engineering', a.engineeringState);
+      if (a.topBottleneck) html += infoRow('Top Bottleneck', a.topBottleneck);
+      if (a.recommendedHiringFocus) html += infoRow('Hiring Focus', a.recommendedHiringFocus);
+      if (a.strongestAreas?.length) html += tagSection('Strengths', a.strongestAreas, 'green');
+      if (a.weakestAreas?.length) html += tagSection('Weak Areas', a.weakestAreas, 'red');
+      if (a.strategicBottlenecks?.length) html += tagSection('Bottlenecks', a.strategicBottlenecks, 'orange');
+      document.getElementById('analysis-details').innerHTML = html;
 
       // Recommendation
       let recHtml = `
@@ -806,26 +640,20 @@
       `;
       if (r.summary) recHtml += infoRow('Summary', r.summary);
       if (r.whyNow) recHtml += infoRow('Why Now', r.whyNow);
-      if (r.expectedImpact?.length) {
-        recHtml += '<div style="margin-top:0.75rem"><label>Expected Impact</label><div class="tag-list">' +
-          r.expectedImpact.map(s => `<span class="tag green">${esc(s)}</span>`).join('') + '</div></div>';
-      }
-      if (r.risksIfDelayed?.length) {
-        recHtml += '<div style="margin-top:0.75rem"><label>Risks if Delayed</label><div class="tag-list">' +
-          r.risksIfDelayed.map(s => `<span class="tag red">${esc(s)}</span>`).join('') + '</div></div>';
-      }
+      if (r.expectedImpact?.length) recHtml += tagSection('Expected Impact', r.expectedImpact, 'green');
+      if (r.risksIfDelayed?.length) recHtml += tagSection('Risks if Delayed', r.risksIfDelayed, 'red');
       document.getElementById('recommendation-details').innerHTML = recHtml;
 
       // Candidates
       const grid = document.getElementById('candidate-grid');
       if (candidates.length === 0) {
-        grid.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:2rem">No candidates found. Check SerpAPI key configuration.</p>';
+        grid.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:2rem">No candidates found. This can happen if the SerpAPI key is missing or the role is very niche.</p>';
       } else {
         grid.innerHTML = candidates.map((c, i) => {
           const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal';
           let links = '';
-          if (c.linkedinUrl) links += `<a href="${esc(c.linkedinUrl)}" target="_blank">LinkedIn</a>`;
-          if (c.githubUrl) links += `<a href="${esc(c.githubUrl)}" target="_blank">GitHub</a>`;
+          if (c.linkedinUrl) links += `<a href="${esc(c.linkedinUrl)}" target="_blank" rel="noopener">LinkedIn</a>`;
+          if (c.githubUrl) links += `<a href="${esc(c.githubUrl)}" target="_blank" rel="noopener">GitHub</a>`;
           return `
             <div class="candidate-card">
               <div class="candidate-rank ${rankClass}">#${i + 1}</div>
@@ -843,15 +671,16 @@
     }
 
     function resetApp() {
-      documents.length = 0;
-      document.getElementById('company-name').value = '';
-      document.getElementById('company-website').value = '';
-      document.getElementById('company-stage').value = 'seed';
-      document.getElementById('company-employees').value = '';
-      document.getElementById('company-industry').value = '';
-      document.getElementById('company-description').value = '';
-      renderDocList();
-      goToStep(1);
+      document.getElementById('hero').style.display = '';
+      document.getElementById('card-form').style.display = '';
+      document.getElementById('card-pipeline').classList.remove('visible');
+      document.getElementById('results-section').classList.remove('visible');
+      // Reset step indicators
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById('ps-' + i);
+        el.className = 'p-step';
+        el.querySelector('.p-step-icon').textContent = i;
+      }
     }
 
     // ── Helpers ──────────────────────────
@@ -865,8 +694,9 @@
       return `<div class="info-row"><span class="info-label">${esc(label)}</span><span class="info-value">${esc(value)}</span></div>`;
     }
 
-    // Init
-    renderDocList();
+    function tagSection(label, items, color) {
+      return `<div style="margin-top:0.75rem"><label>${esc(label)}</label><div class="tag-list">${items.map(s => `<span class="tag ${color}">${esc(s)}</span>`).join('')}</div></div>`;
+    }
   </script>
 </body>
 </html>

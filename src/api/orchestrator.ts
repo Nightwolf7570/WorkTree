@@ -18,8 +18,9 @@ export interface PipelineResult {
 }
 
 /**
- * Run the full WorkTree pipeline end-to-end:
- *   company_docs → embeddings → company analysis → role recommendation → candidate discovery
+ * Run the full WorkTree pipeline end-to-end.
+ * Documents array is optional — if empty, a synthetic document is created
+ * from the company description so the pipeline still works.
  */
 export async function runFullPipeline(
   companyInput: {
@@ -51,9 +52,31 @@ export async function runFullPipeline(
     })
     .returning();
 
-  // Step 2: Ingest documents
-  console.log(`[Pipeline] Step 2: Ingesting ${documents.length} documents...`);
-  const parsed = documents.map((doc) =>
+  // Step 2: Build documents — use provided docs or auto-generate from company info
+  const allDocs = [...documents];
+  if (allDocs.length === 0 || companyInput.description) {
+    // Always include a company overview doc built from the form fields
+    const overviewParts: string[] = [];
+    overviewParts.push(`Company Name: ${companyInput.name}`);
+    if (companyInput.industry) overviewParts.push(`Industry: ${companyInput.industry}`);
+    if (companyInput.stage) overviewParts.push(`Stage: ${companyInput.stage}`);
+    if (companyInput.employeeCount) overviewParts.push(`Team Size: ${companyInput.employeeCount} employees`);
+    if (companyInput.website) overviewParts.push(`Website: ${companyInput.website}`);
+    if (companyInput.description) {
+      overviewParts.push("");
+      overviewParts.push("Company Description:");
+      overviewParts.push(companyInput.description);
+    }
+
+    allDocs.push({
+      source: "company_overview",
+      title: `${companyInput.name} - Company Overview`,
+      content: overviewParts.join("\n"),
+    });
+  }
+
+  console.log(`[Pipeline] Step 2: Ingesting ${allDocs.length} documents...`);
+  const parsed = allDocs.map((doc) =>
     parseRawText({ title: doc.title, content: doc.content, source: doc.source })
   );
   const docIds = await ingestDocuments(company.id, parsed, ctx);
